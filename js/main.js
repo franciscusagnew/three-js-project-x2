@@ -36,7 +36,20 @@ function init() {
 	plane.position.y = 0;
 	plane.position.z = 0;
 	scene.add( plane );
-	
+
+	var cubeGeometry = new THREE.CubeGeometry( 4, 4, 4 );
+	var cubeMaterial = new THREE.MeshBasicMaterial(
+		{
+			color: '#f00'
+		}
+	);
+	var cube = new THREE.Mesh( cubeGeometry, cubeMaterial );
+	cube.name = "cube_1";
+	cube.position.x = -4;
+	cube.position.y = 3;
+	cube.position.z = 0;
+	scene.add( cube );
+
 	document.body.appendChild( renderer.domElement );
 
 	renderer.render(
