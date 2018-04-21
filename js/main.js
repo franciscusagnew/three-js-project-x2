@@ -40,7 +40,8 @@ function init() {
 	var cubeGeometry = new THREE.CubeGeometry( 4, 4, 4 );
 	var cubeMaterial = new THREE.MeshBasicMaterial(
 		{
-			color: '#f00'
+			color: '#f00',
+			wireframe: true
 		}
 	);
 	var cube = new THREE.Mesh( cubeGeometry, cubeMaterial );
@@ -49,6 +50,20 @@ function init() {
 	cube.position.y = 3;
 	cube.position.z = 0;
 	scene.add( cube );
+
+	var sphereGeometry = new THREE.SphereGeometry( 4, 20, 20 );
+	var sphereMaterial = new THREE.MeshBasicMaterial(
+		{
+			color: '#7777ff',
+			wireframe: true
+		}
+	);
+	var sphere = new THREE.Mesh( sphereGeometry, sphereMaterial );
+	sphere.name = "sphere_1";
+	sphere.position.x = 20;
+	sphere.position.y = 4;
+	sphere.position.z = 2;
+	scene.add( sphere );
 
 	document.body.appendChild( renderer.domElement );
 
