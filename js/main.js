@@ -20,6 +20,23 @@ function init() {
 	renderer.setClearColor('#000', 1.0 );
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	
+	var axes = new THREE.AxisHelper( 20 );
+	scene.add( axes );
+
+	var planeGeometry = new THREE.PlaneGeometry( 60, 20, 1, 1 );
+	var planeMaterial = new THREE.MeshBasicMaterial(
+		{
+			color: '#ccc'
+		}
+	);
+	var plane = new THREE.Mesh( planeGeometry, planeMaterial );
+	plane.name = "plane_1";
+	plane.rotation.x = -0.5 * Math.PI;
+	plane.position.x = 15;
+	plane.position.y = 0;
+	plane.position.z = 0;
+	scene.add( plane );
+	
 	document.body.appendChild( renderer.domElement );
 
 	renderer.render(
