@@ -78,10 +78,39 @@ function init() {
 
 	document.body.appendChild( renderer.domElement );
 
-	renderer.render(
-		scene,
-		camera
-	);
+	var step = 0;
+
+  var controls = new function() {
+  	this.rotationSpeed = 0.02;
+  	this.bouncingSpeed = 0.03;
+  };
+
+  var gui = new dat.GUI();
+  gui.add(controls, 'rotationSpeed', 0, 0.5);
+  gui.add(controls, 'bouncingSpeed', 0, 0.5);
+
+	update();
+
+	function update() {
+		stats.update();
+
+		// rotate the cube around its axes
+		cube.rotation.x += controls.rotationSpeed;
+		cube.rotation.y += controls.rotationSpeed;
+		cube.rotation.z += controls.rotationSpeed;
+
+		// bounce the sphere up and down
+		step += controls.bouncingSpeed;
+		sphere.position.x = 20 + ( 10 * (Math.cos( step )));
+		sphere.position.y = 2 + ( 10 * Math.abs( Math.sin( step )));
+
+		// render using requestAnimationFrame
+		requestAnimationFrame( update );
+		renderer.render(
+			scene,
+			camera
+		);
+	}
 
 	function initStats() {
   	var stats = new Stats(); 
