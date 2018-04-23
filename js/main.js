@@ -1,5 +1,6 @@
 function init() {
 	var scene = new THREE.Scene();
+	var stats = initStats();
 
 	// Three.js Perspective Camera
 	var camera = new THREE.PerspectiveCamera(
@@ -81,6 +82,18 @@ function init() {
 		scene,
 		camera
 	);
+
+	function initStats() {
+  	var stats = new Stats(); 
+  	stats.setMode( 0 );
+  	stats.domElement.style.position = 'absolute';
+  	stats.domElement.style.left = '0px';
+  	stats.domElement.style.top = '0px';
+
+  	document.getElementById( "stats" ).appendChild( stats.domElement );
+  	
+  	return stats
+  }
 }
 
 init();
