@@ -4,6 +4,18 @@ function init() {
 	var width = window.innerWidth || 2;
 	var height = window.innerHeight || 2;
 
+	container = document.createElement( 'div' );
+	document.body.appendChild( container );
+	var info = document.createElement( 'div' );
+	info.style.position = 'absolute';
+	info.style.top = '10px';
+	info.style.width = '100%';
+	info.style.textAlign = 'center';
+	info.style.fontSize = '1.5em';
+	info.style.color = '#fff';
+	info.innerHTML = 'Drag to change the view';
+	container.appendChild( info );
+
 	// Three.js Perspective Camera
 	var camera = new THREE.PerspectiveCamera(
 		45, // field of view

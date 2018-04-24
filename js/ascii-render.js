@@ -11,16 +11,15 @@ var start = Date.now();
 function init() {
 	var width = window.innerWidth || 2;
 	var height = window.innerHeight || 2;
-
-	var width = window.innerWidth || 2;
-	var height = window.innerHeight || 2;
 	container = document.createElement( 'div' );
 	document.body.appendChild( container );
 	var info = document.createElement( 'div' );
+
 	info.style.position = 'absolute';
 	info.style.top = '10px';
 	info.style.width = '100%';
 	info.style.textAlign = 'center';
+	info.style.fontSize = '1.5em';
 	info.innerHTML = 'Drag to change the view';
 	container.appendChild( info );
 	camera = new THREE.PerspectiveCamera( 70, width / height, 1, 1000 );
@@ -37,6 +36,7 @@ function init() {
 	scene.add( light );
 	sphere = new THREE.Mesh( new THREE.SphereGeometry( 200, 20, 10 ), new THREE.MeshLambertMaterial() );
 	scene.add( sphere );
+
 	// Plane
 	plane = new THREE.Mesh( new THREE.PlaneBufferGeometry( 400, 400 ), new THREE.MeshBasicMaterial( { color: 0xe0e0e0 } ) );
 	plane.position.y = - 200;
@@ -44,6 +44,7 @@ function init() {
 	scene.add( plane );
 	renderer = new THREE.CanvasRenderer();
 	renderer.setSize( width, height );
+
 	// container.appendChild( renderer.domElement );
 	effect = new THREE.AsciiEffect( renderer );
 	effect.setSize( width, height );
