@@ -7,6 +7,6 @@ For more information see the [Three.js Project X2](https://franciscusagnew.githu
 
 Check out these other examples with Three.js:
 
-1.[Ascii Rendering](https://franciscusagnew.github.io/three-js-project-x2/ascii-render.html).
+1. [Ascii Rendering](https://franciscusagnew.github.io/three-js-project-x2/ascii-render.html).
 
 [Franciscus Agnew](http://www.franciscusagnew.com)

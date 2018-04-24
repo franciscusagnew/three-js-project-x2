@@ -1,11 +1,13 @@
 function init() {
 	var scene = new THREE.Scene();
 	var stats = initStats();
+	var width = window.innerWidth || 2;
+	var height = window.innerHeight || 2;
 
 	// Three.js Perspective Camera
 	var camera = new THREE.PerspectiveCamera(
 		45, // field of view
-		window.innerWidth / window.innerHeight, // aspect ratio
+		width / height, // aspect ratio
 		0.1, // near clipping plane
 		1000  // far clipping plane
 	);
@@ -28,9 +30,11 @@ function init() {
 	var planeGeometry = new THREE.PlaneGeometry( 60, 20, 1, 1 );
 	var planeMaterial = new THREE.MeshLambertMaterial(
 		{
-			color: '#ccc'
+			color: '#ccc',
+			side: THREE.DoubleSide
 		}
 	);
+
 	var plane = new THREE.Mesh( planeGeometry, planeMaterial );
 	plane.name = "plane_1";
 	plane.rotation.x = -0.5 * Math.PI;
@@ -47,6 +51,7 @@ function init() {
 			wireframe: false
 		}
 	);
+
 	var cube = new THREE.Mesh( cubeGeometry, cubeMaterial );
 	cube.name = "cube_1";
 	cube.position.x = -4;
@@ -76,6 +81,7 @@ function init() {
 	spotLight.castShadow = true;
 	scene.add( spotLight );
 
+	// WEBgl Renderer
 	document.body.appendChild( renderer.domElement );
 
 	var step = 0;
@@ -88,6 +94,10 @@ function init() {
   var gui = new dat.GUI();
   gui.add(controls, 'rotationSpeed', 0, 0.5);
   gui.add(controls, 'bouncingSpeed', 0, 0.5);
+
+  var trackball = new THREE.TrackballControls( camera );
+
+  window.addEventListener( 'resize', onWindowResize, false );
 
 	update();
 
@@ -104,8 +114,12 @@ function init() {
 		sphere.position.x = 20 + ( 10 * (Math.cos( step )));
 		sphere.position.y = 2 + ( 10 * Math.abs( Math.sin( step )));
 
+		trackball.update();
+
 		// render using requestAnimationFrame
 		requestAnimationFrame( update );
+
+		// WEBGL Renderer
 		renderer.render(
 			scene,
 			camera
@@ -119,10 +133,16 @@ function init() {
   	stats.domElement.style.left = '0px';
   	stats.domElement.style.top = '0px';
 
-  	document.getElementById( "stats" ).appendChild( stats.domElement );
+  	document.getElementById( "app" ).appendChild( stats.domElement );
   	
-  	return stats
+  	return stats;
   }
+
+  function onWindowResize() {
+		camera.aspect = window.innerWidth / window.innerHeight;
+		camera.updateProjectionMatrix();
+		renderer.setSize( window.innerWidth, window.innerHeight );
+	}
 }
 
 init();
