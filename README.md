@@ -9,4 +9,6 @@ Check out these other examples with Three.js:
 
 1. [Ascii Rendering](https://franciscusagnew.github.io/three-js-project-x2/ascii-render.html).
 
+2. [Earth Rendering](https://franciscusagnew.github.io/three-js-project-x2/hello-world.html).
+
 [Franciscus Agnew](http://www.franciscusagnew.com)
