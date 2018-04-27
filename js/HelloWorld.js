@@ -1,6 +1,12 @@
+var renderer;
+var scene;
+var camera;
+var control;
+var stats;
+var cameraControl;
+var container;
+
 function init() {
-	var scene = new THREE.Scene();
-	var stats = initStats();
 	var width = window.innerWidth || 2;
 	var height = window.innerHeight || 2;
 
@@ -16,109 +22,106 @@ function init() {
 	info.innerHTML = 'Drag to change the view';
 	container.appendChild( info );
 
+	// create a scene, that will hold all 
+	// our elements such as objects, cameras and lights.
+	scene = new THREE.Scene();
+
 	// Three.js Perspective Camera
-
-
-	var camera = new THREE.PerspectiveCamera(
+	camera = new THREE.PerspectiveCamera(
 		45, // field of view
 		width / height, // aspect ratio
 		0.1, // near clipping plane
 		1000  // far clipping plane
 	);
 
+	// Name and position the camera to the center of the scene
 	camera.name = 'camera-1';
-	camera.position.x = 35;
-	camera.position.y = 36;
-	camera.position.z = 33;
-	camera.lookAt(scene.position);
+	camera.position.x = 25;
+	camera.position.y = 26;
+	camera.position.z = 23;
+	camera.lookAt( scene.position );
 
 	// Camera Controls
 	cameraControl = new THREE.OrbitControls( camera );
 
-	// WEbGL Rendering
-	var renderer = new THREE.WebGLRenderer();
+	// WEbGL Rendering - sets the background color and the size
+	renderer = new THREE.WebGLRenderer();
 	renderer.setClearColor('#000', 1.0 );
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	renderer.shadowMap.enabled = true;
 
-	var sphereGeometry = new THREE.SphereGeometry( 15, 30, 30 );
-	var sphereMaterial = new THREE.MeshNormalMaterial();
+	// Create a sphere for the earth
+	var sphereGeometry = new THREE.SphereGeometry( 15, 60, 60 );
+	var sphereMaterial = createEarthMaterial();
 	
 	var earthMesh = new THREE.Mesh( sphereGeometry, sphereMaterial );
-	earthMesh.name = "earth";
+	earthMesh.name = 'earth';
 	scene.add( earthMesh );
 
-	/**
-	var spotLight = new THREE.SpotLight( '#fff' );
-	spotLight.position.set( -40, 60, -10 );
-	spotLight.castShadow = true;
-	scene.add( spotLight );
-  **/
-	// WEBgl Renderer
-	document.body.appendChild( renderer.domElement );
-
-  var controls = new function() {
-  	this.rotationSpeed = 0.02;
-  	this.bouncingSpeed = 0.03;
+	// setup the control object for the control gui
+  control = new function() {
+  	this.rotationSpeed = 0.001;
   };
 
-  /**
-  var gui = new dat.GUI();
-  gui.add(controls, 'rotationSpeed', 0, 0.5);
-  gui.add(controls, 'bouncingSpeed', 0, 0.5);
-	**/
+  addControlGui( control );
+  addStats();
 
-  window.addEventListener( 'resize', onWindowResize, false );
+  // add the output of the WEBgl renderer to the html element
+	document.body.appendChild( renderer.domElement );
 
 	update();
+}
 
-	function createEarthMaterial() {
-		// 4096 is the max width for maps
-		var earthTexture = new THREE.ImageUtils.loadTexture("img/textures/planets/earthmap4k.jpg");
+function createEarthMaterial() {
+	// 4096 is the max width for maps
+	var earthTexture = new THREE.ImageUtils.loadTexture("img/textures/planets/earthmap4k.jpg");
+	var earthMaterial = new THREE.MeshBasicMaterial();
+	earthMaterial.map = earthTexture;
 
-		var earthMaterial = new THREE.MeshBasicMaterial();
-		earthMaterial.map = earthTexture;
+	return earthMaterial;
+}
 
-		return earthMaterial;
-	}
+function addControlGui( controlObject ) {
+	var gui = new dat.GUI();
+	gui.add( controlObject, 'rotationSpeed', -0.01, 0.01 );
+}
 
-	function update() {
-		stats.update();
+function addStats() {
+	stats = new Stats(); 
+	stats.setMode( 0 );
+	stats.domElement.style.position = 'absolute';
+	stats.domElement.style.left = '0px';
+	stats.domElement.style.top = '0px';
 
-		// rotate the cube around its axes
-		earthMesh.rotation.x += controls.rotationSpeed;
-		earthMesh.rotation.y += controls.rotationSpeed;
-		earthMesh.rotation.z += controls.rotationSpeed;
+	document.getElementById( "app" ).appendChild( stats.domElement );
+}
 
-		cameraControl.update();
+function update() {
+	// Update stats
+	stats.update();
 
-		// render using requestAnimationFrame
-		requestAnimationFrame( update );
+	// Update the camera
+	cameraControl.update();
 
-		// WEBGL Renderer
-		renderer.render(
-			scene,
-			camera
-		);
-	}
+	// rotate the globe around its y axis
+	scene.getObjectByName('earth').rotation.y += control.rotationSpeed;
 
-	function initStats() {
-  	var stats = new Stats(); 
-  	stats.setMode( 0 );
-  	stats.domElement.style.position = 'absolute';
-  	stats.domElement.style.left = '0px';
-  	stats.domElement.style.top = '0px';
+	// Render the scene
+	renderer.render(
+		scene,
+		camera
+	);
 
-  	document.getElementById( "app" ).appendChild( stats.domElement );
-  	
-  	return stats;
-  }
+	// render using requestAnimationFrame
+	requestAnimationFrame( update );
+}
 
-  function onWindowResize() {
-		camera.aspect = window.innerWidth / window.innerHeight;
-		camera.updateProjectionMatrix();
-		renderer.setSize( window.innerWidth, window.innerHeight );
-	}
+function onWindowResize() {
+	camera.aspect = window.innerWidth / window.innerHeight;
+	camera.updateProjectionMatrix();
+	renderer.setSize( window.innerWidth, window.innerHeight );
 }
 
 init();
+
+window.addEventListener( 'resize', onWindowResize, false );
