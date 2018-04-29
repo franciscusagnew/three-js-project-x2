@@ -1,3 +1,4 @@
+// global variables
 var renderer;
 var scene;
 var camera;
@@ -5,6 +6,13 @@ var control;
 var stats;
 var cameraControl;
 var container;
+
+// background elements
+var cameraBG;
+var sceneBG;
+var composer;
+var clock;
+
 
 function init() {
 	var width = window.innerWidth || 2;
@@ -25,6 +33,8 @@ function init() {
 	// create a scene, that will hold all 
 	// our elements such as objects, cameras and lights.
 	scene = new THREE.Scene();
+
+	clock = new THREE.Clock();
 
 	// Three.js Perspective Camera
 	camera = new THREE.PerspectiveCamera(
@@ -65,12 +75,12 @@ function init() {
 	scene.add( cloudMesh );
 
 	// Add an ambient light source
-	var ambientLight = new THREE.AmbientLight( '#111' );
+	var ambientLight = new THREE.AmbientLight( '#111111' );
 	ambientLight.name = 'ambient';
 	scene.add( ambientLight );
 
 	// Add a directional light source
-	var directLight = new THREE.DirectionalLight( '#fff' );
+	var directLight = new THREE.DirectionalLight( '#fff', 1 );
 	directLight.position = new THREE.Vector3( 100, 10, -50 );
 	directLight.name = 'direct';
 	scene.add( directLight );
@@ -85,10 +95,46 @@ function init() {
   addControlGui( control );
   addStats();
 
+  // Add background using a camera
+  cameraBG = new THREE.OrthographicCamera( 
+  	-window.innerWidth, window.innerWidth, 
+  	window.innerHeight, -window.innerHeight,
+  	-10000, 10000 );
+  cameraBG.position.z = 50;
+  sceneBG = new THREE.Scene();
+
+  var loader = new THREE.TextureLoader();
+  var materialColor = new THREE.MeshBasicMaterial(
+	  {
+	  	map: loader.load("img/textures/planets/starry_bkg.jpg"),
+	  	depthTest: false
+	  }
+  );
+  var bgPlane = new THREE.Mesh( new THREE.PlaneGeometry( 1, 1 ), materialColor );
+  bgPlane.position.z = -100;
+  bgPlane.scale.set( window.innerWidth * 2, window.innerHeight * 2, 1 );
+  sceneBG.add( bgPlane );
+
+  // Setup the composer
+	// First render the background
+	var bgPass = new THREE.RenderPass( sceneBG, cameraBG );
+	// Next render the scene (Rotating Earth)
+	var renderPass = new THREE.RenderPass( scene, camera );
+	renderPass.clear = false;
+	// Finally add the result to the screen
+	var effectCopy = new THREE.ShaderPass( THREE.CopyShader );
+	effectCopy.renderToScreen = true;
+
+	// Add the passes to the composer
+	composer = new THREE.EffectComposer( renderer );
+	composer.addPass( bgPass );
+	composer.addPass( renderPass );
+	composer.addPass( effectCopy );
+
   // add the output of the WEBgl renderer to the HTML element
 	document.body.appendChild( renderer.domElement );
 
-	update();
+	render();
 }
 
 function createEarthMaterial() {
@@ -127,7 +173,7 @@ function addStats() {
 	document.getElementById( "app" ).appendChild( stats.domElement );
 }
 
-function update() {
+function render() {
 	// Update stats
 	stats.update();
 
@@ -143,15 +189,18 @@ function update() {
 	scene.getObjectByName('direct').color = new THREE.Color( control.directLightColor );
 
 
-
 	// Render the scene
+	/**
 	renderer.render(
 		scene,
 		camera
 	);
+	**/
+	renderer.autoClear = false;
+	composer.render();
 
 	// render using requestAnimationFrame
-	requestAnimationFrame( update );
+	requestAnimationFrame( render );
 }
 
 function onWindowResize() {
