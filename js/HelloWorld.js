@@ -53,10 +53,16 @@ function init() {
 	// Create a sphere for the earth
 	var sphereGeometry = new THREE.SphereGeometry( 15, 60, 60 );
 	var sphereMaterial = createEarthMaterial();
-	
 	var earthMesh = new THREE.Mesh( sphereGeometry, sphereMaterial );
 	earthMesh.name = 'earth';
 	scene.add( earthMesh );
+
+	// Create a sphere for the clouds
+	var cloudGeometry = new THREE.SphereGeometry( 15.25, 60, 60 );
+	var cloudMaterial = createCloudMaterial();
+	var cloudMesh = new THREE.Mesh( cloudGeometry, cloudMaterial );
+	cloudMesh.name = 'clouds';
+	scene.add( cloudMesh );
 
 	// setup the control object for the control gui
   control = new function() {
@@ -66,7 +72,7 @@ function init() {
   addControlGui( control );
   addStats();
 
-  // add the output of the WEBgl renderer to the html element
+  // add the output of the WEBgl renderer to the HTML element
 	document.body.appendChild( renderer.domElement );
 
 	update();
@@ -74,11 +80,21 @@ function init() {
 
 function createEarthMaterial() {
 	// 4096 is the max width for maps
-	var earthTexture = new THREE.ImageUtils.loadTexture("img/textures/planets/earthmap4k.jpg");
+	var earthTexture = new THREE.TextureLoader().load("img/textures/planets/earthmap4k.jpg");
 	var earthMaterial = new THREE.MeshBasicMaterial();
 	earthMaterial.map = earthTexture;
 
 	return earthMaterial;
+}
+
+function createCloudMaterial() {
+	// 4096 is the max width for maps
+	var cloudTexture = new THREE.TextureLoader().load("img/textures/planets/fair_clouds_4k.png");
+	var cloudMaterial = new THREE.MeshBasicMaterial();
+	cloudMaterial.map = cloudTexture;
+	cloudMaterial.transparent = true;
+
+	return cloudMaterial;
 }
 
 function addControlGui( controlObject ) {
@@ -105,6 +121,7 @@ function update() {
 
 	// rotate the globe around its y axis
 	scene.getObjectByName('earth').rotation.y += control.rotationSpeed;
+	scene.getObjectByName('clouds').rotation.y += control.rotationSpeed * 1.1;
 
 	// Render the scene
 	renderer.render(
