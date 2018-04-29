@@ -64,9 +64,22 @@ function init() {
 	cloudMesh.name = 'clouds';
 	scene.add( cloudMesh );
 
+	// Add an ambient light source
+	var ambientLight = new THREE.AmbientLight( '#111' );
+	ambientLight.name = 'ambient';
+	scene.add( ambientLight );
+
+	// Add a directional light source
+	var directLight = new THREE.DirectionalLight( '#fff' );
+	directLight.position = new THREE.Vector3( 100, 10, -50 );
+	directLight.name = 'direct';
+	scene.add( directLight );
+
 	// setup the control object for the control gui
   control = new function() {
   	this.rotationSpeed = 0.001;
+  	this.ambientLightColor = ambientLight.color.getHex();
+  	this.directLightColor = directLight.color.getHex();
   };
 
   addControlGui( control );
@@ -81,7 +94,7 @@ function init() {
 function createEarthMaterial() {
 	// 4096 is the max width for maps
 	var earthTexture = new THREE.TextureLoader().load("img/textures/planets/earthmap4k.jpg");
-	var earthMaterial = new THREE.MeshBasicMaterial();
+	var earthMaterial = new THREE.MeshPhongMaterial();
 	earthMaterial.map = earthTexture;
 
 	return earthMaterial;
@@ -90,7 +103,7 @@ function createEarthMaterial() {
 function createCloudMaterial() {
 	// 4096 is the max width for maps
 	var cloudTexture = new THREE.TextureLoader().load("img/textures/planets/fair_clouds_4k.png");
-	var cloudMaterial = new THREE.MeshBasicMaterial();
+	var cloudMaterial = new THREE.MeshPhongMaterial();
 	cloudMaterial.map = cloudTexture;
 	cloudMaterial.transparent = true;
 
@@ -99,7 +112,9 @@ function createCloudMaterial() {
 
 function addControlGui( controlObject ) {
 	var gui = new dat.GUI();
-	gui.add( controlObject, 'rotationSpeed', -0.01, 0.01 );
+	gui.add(controlObject, 'rotationSpeed', -0.01, 0.01);
+	gui.addColor( controlObject, 'ambientLightColor' );
+	gui.addColor( controlObject, 'directLightColor' );
 }
 
 function addStats() {
@@ -122,6 +137,12 @@ function update() {
 	// rotate the globe around its y axis
 	scene.getObjectByName('earth').rotation.y += control.rotationSpeed;
 	scene.getObjectByName('clouds').rotation.y += control.rotationSpeed * 1.1;
+
+	// Update light colors
+	scene.getObjectByName('ambient').color = new THREE.Color( control.ambientLightColor );
+	scene.getObjectByName('direct').color = new THREE.Color( control.directLightColor );
+
+
 
 	// Render the scene
 	renderer.render(
