@@ -11,4 +11,6 @@ Check out these other examples with Three.js:
 
 2. [Earth Rendering](https://franciscusagnew.github.io/three-js-project-x2/hello-world.html).
 
+3. [Moon Rendering](https://franciscusagnew.github.io/three-js-project-x2/hello-moon.html).
+
 [Franciscus Agnew](http://www.franciscusagnew.com)
