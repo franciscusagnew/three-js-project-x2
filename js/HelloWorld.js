@@ -148,7 +148,7 @@ function createEarthMaterial() {
 
     // Add the normal properties
     earthMaterial.normalMap = normalMap;
-    earthMaterial.normalScale = new THREE.Vector2(0.5, 0.7);
+    earthMaterial.normalScale = new THREE.Vector2(-0.5, -0.7);
 
     return earthMaterial;
 }
@@ -214,6 +214,8 @@ function createCloudMaterial() {
     var cloudMaterial = new THREE.MeshPhongMaterial();
     cloudMaterial.map = cloudTexture;
     cloudMaterial.transparent = true;
+    cloudMaterial.opacity = 0.5;
+    cloudMaterial.blending = THREE.AdditiveBlending;
 
     return cloudMaterial;
 }
